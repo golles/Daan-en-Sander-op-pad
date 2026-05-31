@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Manen (stekelige ster) -->
+  <polygon points="62,32 52.3,40.4 53.2,53.2 40.4,52.3 32,62 23.6,52.3 10.8,53.2 11.7,40.4 2,32 11.7,23.6 10.8,10.8 23.6,11.7 32,2 40.4,11.7 53.2,10.8 52.3,23.6"
+           fill="#a85518"/>
+  <!-- Oren -->
+  <circle cx="19" cy="20" r="7" fill="#a85518"/>
+  <circle cx="45" cy="20" r="7" fill="#a85518"/>
+  <circle cx="19" cy="20" r="3.4" fill="#f6c453"/>
+  <circle cx="45" cy="20" r="3.4" fill="#f6c453"/>
+  <!-- Gezicht -->
+  <circle cx="32" cy="33" r="19" fill="#f6c453"/>
+  <!-- Snuit -->
+  <ellipse cx="32" cy="40" rx="11" ry="9" fill="#ffe1a3"/>
+  <!-- Ogen -->
+  <circle cx="25" cy="31" r="2.8" fill="#3a2a1a"/>
+  <circle cx="39" cy="31" r="2.8" fill="#3a2a1a"/>
+  <circle cx="26" cy="30" r="0.9" fill="#fff"/>
+  <circle cx="40" cy="30" r="0.9" fill="#fff"/>
+  <!-- Neus -->
+  <path d="M28 37 h8 l-4 4 z" fill="#6b3f1a"/>
+  <!-- Mond -->
+  <path d="M32 41 v3 M32 44 q-4 3 -7 1 M32 44 q4 3 7 1"
+        fill="none" stroke="#6b3f1a" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- Snorhaartjes -->
+  <path d="M22 39 l-8 -1 M22 41 l-8 2 M42 39 l8 -1 M42 41 l8 2"
+        fill="none" stroke="#c98a3a" stroke-width="1.2" stroke-linecap="round"/>
+</svg>
