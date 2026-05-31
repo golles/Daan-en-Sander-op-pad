@@ -2,6 +2,7 @@
 
 export class Sound {
   private ctx: AudioContext | null = null;
+  private unlocked = false;
 
   /** Maakt/hervat de AudioContext. Moet na een gebruikersactie gebeuren. */
   resume(): void {
@@ -11,6 +12,32 @@ export class Sound {
     if (this.ctx.state === "suspended") {
       void this.ctx.resume();
     }
+  }
+
+  /**
+   * iOS Safari blokkeert audio tot er binnen een échte aanraking (synchroon
+   * in de event-handler) een geluid speelt. Daarom luisteren we naar de
+   * eerste user-gesture en ontgrendelen we daar de audio met een kort,
+   * stil buffertje. Daarna hervat dit ook de context als die (na backgrounden)
+   * weer is gepauzeerd.
+   */
+  installUnlockHandlers(): void {
+    const handler = () => this.unlock();
+    for (const ev of ["pointerdown", "touchend", "mousedown", "keydown"]) {
+      window.addEventListener(ev, handler, { passive: true });
+    }
+  }
+
+  private unlock(): void {
+    this.resume();
+    if (this.unlocked || !this.ctx) return;
+    // Een 1-sample stil buffertje afspelen ontgrendelt audio op iOS.
+    const buffer = this.ctx.createBuffer(1, 1, 22050);
+    const src = this.ctx.createBufferSource();
+    src.buffer = buffer;
+    src.connect(this.ctx.destination);
+    src.start(0);
+    this.unlocked = true;
   }
 
   private blip(

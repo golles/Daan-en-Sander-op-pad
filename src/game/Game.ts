@@ -79,6 +79,8 @@ export class Game {
   }
 
   start(): void {
+    // Audio ontgrendelen bij de eerste aanraking/toets (vooral voor iOS).
+    this.sound.installUnlockHandlers();
     requestAnimationFrame((t) => this.loop(t));
   }
 
