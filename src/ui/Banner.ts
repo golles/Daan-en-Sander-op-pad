@@ -5,6 +5,9 @@ import { roundRect, star, shade } from "../renderer/DrawUtils.ts";
 import type { Ctx } from "../renderer/DrawUtils.ts";
 
 const VIEW_W = 960;
+const VIEW_H = 540;
+const BANNER_W = 540;
+const BANNER_H = 124;
 const DURATION = 5; // seconden in beeld
 const FADE_IN = 0.3;
 const FADE_OUT = 0.5;
@@ -14,6 +17,7 @@ interface BannerItem {
   label: string; // klein bovenschrift
   title: string; // grote naam
   gold: boolean; // gouden stijl + sterren (Super-modus)
+  bottom: boolean; // onderin tonen (als de speler hoog aan het klimmen is)
   timeLeft: number;
   duration: number;
 }
@@ -26,23 +30,25 @@ export class Banner {
     return this.current !== null;
   }
 
-  showAnimal(emoji: string, naam: string): void {
+  showAnimal(emoji: string, naam: string, bottom = false): void {
     this.show({
       emoji,
       label: "Nieuw dier gevonden!",
       title: naam,
       gold: false,
+      bottom,
       timeLeft: DURATION,
       duration: DURATION,
     });
   }
 
-  showSuper(): void {
+  showSuper(bottom = false): void {
     this.show({
       emoji: "🦸",
       label: "POWER-UP!",
       title: "Super Oom Sander!",
       gold: true,
+      bottom,
       timeLeft: DURATION,
       duration: DURATION,
     });
@@ -66,9 +72,35 @@ export class Banner {
     }
   }
 
+  /** De verticale band [top, bottom] die de huidige banner inneemt. */
+  private band(): { top: number; bottom: number } {
+    const top = this.current!.bottom ? VIEW_H - BANNER_H - 28 : 104;
+    return { top, bottom: top + BANNER_H };
+  }
+
+  /**
+   * Verbergt de banner zodra de speler de band van de banner binnenkomt
+   * (de "hoogtegrens" overschrijdt), zodat de banner de actie nooit langer
+   * dan nodig afdekt — bv. omhoog klimmen na het oppakken van de power-up.
+   */
+  dismissIfBlocked(playerTop: number, playerBottom: number): void {
+    if (!this.current) return;
+    const { top, bottom } = this.band();
+    const margin = 12;
+    if (playerBottom > top - margin && playerTop < bottom + margin) {
+      this.current = null;
+    }
+  }
+
   draw(ctx: Ctx, time: number): void {
     const b = this.current;
     if (!b) return;
+
+    const w = BANNER_W;
+    const h = BANNER_H;
+    const x = (VIEW_W - w) / 2;
+    // Bovenin bij normale actie, onderin als de speler hoog klimt.
+    const baseY = b.bottom ? VIEW_H - h - 28 : 104;
 
     const age = b.duration - b.timeLeft;
     let alpha = 1;
@@ -76,15 +108,13 @@ export class Banner {
     if (age < FADE_IN) {
       const p = age / FADE_IN;
       alpha = p;
-      slide = (1 - p) * -50; // schuift van boven in beeld
+      // Schuift in vanaf de dichtstbijzijnde rand (boven of onder).
+      slide = (1 - p) * (b.bottom ? 50 : -50);
     } else if (b.timeLeft < FADE_OUT) {
       alpha = Math.max(0, b.timeLeft / FADE_OUT);
     }
 
-    const w = 540;
-    const h = 124;
-    const x = (VIEW_W - w) / 2;
-    const y = 104 + slide;
+    const y = baseY + slide;
 
     ctx.save();
     ctx.globalAlpha = alpha;

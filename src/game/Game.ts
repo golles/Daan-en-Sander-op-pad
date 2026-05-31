@@ -78,6 +78,15 @@ export class Game {
     return this.level.def.startX + this.startOffset;
   }
 
+  /**
+   * Bepaalt waar de banner komt op basis van de hoogte van het verzamelde
+   * object (stabiel, in tegenstelling tot de sprong-piek van de speler):
+   * hoog verzameld (klimtop) -> banner onderin, anders bovenin.
+   */
+  private bannerAtBottom(objectY: number): boolean {
+    return objectY < 260;
+  }
+
   start(): void {
     // Audio ontgrendelen bij de eerste aanraking/toets (vooral voor iOS).
     this.sound.installUnlockHandlers();
@@ -135,6 +144,9 @@ export class Game {
     const wasOnGround = this.player.onGround;
     this.player.update(this.input, this.level.platforms, dt);
 
+    // Banner weghalen zodra de speler in de band van de banner komt.
+    this.banner.dismissIfBlocked(this.player.y, this.player.y + this.player.h);
+
     // Spronggeluid bij het verlaten van de grond door te springen.
     if (wasOnGround && !this.player.onGround && this.player.vy < 0) {
       this.sound.jump();
@@ -156,7 +168,7 @@ export class Game {
         a.collect();
         this.totalCollected++;
         this.sound.collect();
-        this.banner.showAnimal(a.def.emoji, a.def.naam);
+        this.banner.showAnimal(a.def.emoji, a.def.naam, this.bannerAtBottom(a.y));
         this.spawnParticles(a.centerX, a.centerY, "#ffe680", 10, 160);
       }
     }
@@ -185,7 +197,7 @@ export class Game {
   private triggerSuper(): void {
     this.player.activateSuper();
     this.sound.powerUp();
-    this.banner.showSuper();
+    this.banner.showSuper(this.bannerAtBottom(this.level.powerUp.y));
     this.flash = 1;
     this.shockwave = {
       x: this.player.centerX,

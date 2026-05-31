@@ -34,4 +34,30 @@ describe("Banner", () => {
     banner.clear();
     expect(banner.active).toBe(false);
   });
+
+  it("verbergt een bovenbanner zodra de speler omhoog in de band komt", () => {
+    const banner = new Banner();
+    banner.showAnimal("🦓", "Zebra"); // bovenin (band ~104-228)
+
+    // Speler laag (op de grond): blijft staan.
+    banner.dismissIfBlocked(420, 476);
+    expect(banner.active).toBe(true);
+
+    // Speler springt omhoog in de band: verdwijnt.
+    banner.dismissIfBlocked(150, 206);
+    expect(banner.active).toBe(false);
+  });
+
+  it("een onderbanner blijft staan tot de speler weer omlaag komt", () => {
+    const banner = new Banner();
+    banner.showAnimal("🦅", "Roofvogel", true); // onderin (band ~388-512)
+
+    // Speler hoog op de trap: blijft staan.
+    banner.dismissIfBlocked(120, 176);
+    expect(banner.active).toBe(true);
+
+    // Speler daalt af in de band: verdwijnt.
+    banner.dismissIfBlocked(420, 476);
+    expect(banner.active).toBe(false);
+  });
 });
