@@ -9,6 +9,7 @@ import type { GameState } from "./types.ts";
 import { Player, POWERUP_DURATION } from "../entities/Player.ts";
 import { Follower } from "../entities/Follower.ts";
 import { LevelManager } from "../levels/LevelManager.ts";
+import { CATEGORIES } from "../levels/LevelData.ts";
 import { drawLevel } from "../renderer/LevelRenderer.ts";
 import { drawPlayer } from "../renderer/PlayerRenderer.ts";
 import { drawFollower } from "../renderer/FollowerRenderer.ts";
@@ -44,6 +45,7 @@ export class Game {
   private follower: Follower;
 
   private state: GameState = "start";
+  private selectedCategory = 0; // gekozen categorie op het startscherm
   private camX = 0;
   private totalCollected = 0;
   private time = 0;
@@ -115,9 +117,18 @@ export class Game {
 
     switch (this.state) {
       case "start":
+        // Categorie kiezen met links/rechts, bevestigen met spatie.
+        if (this.input.justPressed("left")) {
+          this.selectedCategory =
+            (this.selectedCategory - 1 + CATEGORIES.length) % CATEGORIES.length;
+        }
+        if (this.input.justPressed("right")) {
+          this.selectedCategory =
+            (this.selectedCategory + 1) % CATEGORIES.length;
+        }
         if (pressed) {
           this.sound.resume();
-          this.state = "playing";
+          this.startCategory(this.selectedCategory);
         }
         break;
       case "playing":
@@ -127,7 +138,7 @@ export class Game {
         if (pressed) this.advanceLevel();
         break;
       case "gameComplete":
-        if (pressed) this.restart();
+        if (pressed) this.state = "start"; // terug naar de categoriekeuze
         break;
     }
 
@@ -236,9 +247,10 @@ export class Game {
     this.state = "playing";
   }
 
-  private restart(): void {
+  /** Start een gekozen categorie bij het eerste level. */
+  private startCategory(categoryIndex: number): void {
     this.totalCollected = 0;
-    this.level.load(0);
+    this.level.selectCategory(categoryIndex);
     this.loadCurrentLevel();
     this.state = "playing";
   }
@@ -326,7 +338,7 @@ export class Game {
 
     // Schermen erbovenop.
     if (this.state === "start") {
-      drawStartScreen(ctx, this.time);
+      drawStartScreen(ctx, this.time, CATEGORIES, this.selectedCategory);
     } else if (this.state === "levelComplete") {
       drawLevelComplete(
         ctx,
@@ -335,7 +347,7 @@ export class Game {
         this.time,
       );
     } else if (this.state === "gameComplete") {
-      drawGameComplete(ctx, this.totalCollected, this.time);
+      drawGameComplete(ctx, this.totalCollected, this.level.category, this.time);
     }
   }
 

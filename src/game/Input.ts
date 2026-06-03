@@ -60,7 +60,7 @@ export class Input {
   }
 
   /** True als deze actie net (deze frame) is ingedrukt. */
-  justPressed(action: "jump" | "enter"): boolean {
+  justPressed(action: "jump" | "enter" | "left" | "right"): boolean {
     return this.pressedThisFrame.has(action);
   }
 

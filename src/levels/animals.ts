@@ -28,3 +28,17 @@ export const ANIMALS: Record<string, AnimalDef> = {
   geit: { id: "geit", emoji: "🐐", naam: "Geit" },
   neushoorn: { id: "neushoorn", emoji: "🦏", naam: "Witte neushoorn" },
 };
+
+// Dieren uit de oertijd: dino's, krokodillen, slangen, schildpadden en
+// andere reptielen. Gebruikt door de tweede categorie (Dino's).
+export const DINOS: Record<string, AnimalDef> = {
+  trex: { id: "trex", emoji: "🦖", naam: "Tyrannosaurus rex" },
+  brachiosaurus: { id: "brachiosaurus", emoji: "🦕", naam: "Brachiosaurus" },
+  krokodil: { id: "krokodil", emoji: "🐊", naam: "Krokodil" },
+  python: { id: "python", emoji: "🐍", naam: "Tijgerpython" },
+  schildpad: { id: "schildpad", emoji: "🐢", naam: "Reuzenschildpad" },
+  leguaan: { id: "leguaan", emoji: "🦎", naam: "Groene leguaan" },
+  mammoet: { id: "mammoet", emoji: "🦣", naam: "Wolharige mammoet" },
+  kikker: { id: "kikker", emoji: "🐸", naam: "Kikker" },
+  schorpioen: { id: "schorpioen", emoji: "🦂", naam: "Schorpioen" },
+};

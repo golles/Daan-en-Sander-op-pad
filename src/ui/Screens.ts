@@ -2,6 +2,7 @@
 
 import type { Ctx } from "../renderer/DrawUtils.ts";
 import type { Animal } from "../entities/Animal.ts";
+import type { CategoryDef } from "../game/types.ts";
 
 const VIEW_W = 960;
 const VIEW_H = 540;
@@ -30,21 +31,78 @@ function blink(time: number): number {
   return 0.5 + Math.sin(time * 4) * 0.5;
 }
 
-export function drawStartScreen(ctx: Ctx, time: number): void {
+/**
+ * Start- én keuzescherm in één: de titel plus twee categoriekaarten.
+ * Met ⬅️/➡️ kies je een categorie, met spatie start je die.
+ */
+export function drawStartScreen(
+  ctx: Ctx,
+  time: number,
+  categories: CategoryDef[],
+  selected: number,
+): void {
   overlay(ctx, 0.45);
 
-  centerText(ctx, "🦁  Daan & Oom Sander  🦒", 150, "bold 44px 'Comic Sans MS', sans-serif", "#ffd23f");
-  centerText(ctx, "op Safari!", 200, "bold 36px 'Comic Sans MS', sans-serif", "#fff");
+  centerText(ctx, "🦁  Daan & Oom Sander  🦖", 86, "bold 40px 'Comic Sans MS', sans-serif", "#ffd23f");
+  centerText(ctx, "Kies je avontuur!", 134, "bold 28px 'Comic Sans MS', sans-serif", "#fff");
 
-  centerText(ctx, "Help Oom Sander en Daan alle dieren vinden", 280, "22px 'Comic Sans MS', sans-serif", "#fff");
-  centerText(ctx, "in Safaripark Beekse Bergen!", 312, "22px 'Comic Sans MS', sans-serif", "#fff");
+  // Twee categoriekaarten naast elkaar.
+  const cardW = 300;
+  const cardH = 170;
+  const gap = 60;
+  const totalW = categories.length * cardW + (categories.length - 1) * gap;
+  let cx = VIEW_W / 2 - totalW / 2;
+  const cardY = 190;
+  for (let i = 0; i < categories.length; i++) {
+    const cat = categories[i];
+    const isSel = i === selected;
+    drawCategoryCard(ctx, cx, cardY, cardW, cardH, cat, isSel, time);
+    cx += cardW + gap;
+  }
 
-  centerText(ctx, "⬅️ ➡️  lopen     ⬆️ / spatie  springen", 380, "20px 'Comic Sans MS', sans-serif", "#cfe8ff");
-  centerText(ctx, "Op de telefoon: gebruik de knoppen onderin", 410, "16px 'Comic Sans MS', sans-serif", "#cfe8ff");
+  centerText(ctx, "⬅️ ➡️  kiezen     ⬆️ / spatie  springen", 408, "20px 'Comic Sans MS', sans-serif", "#cfe8ff");
+  centerText(ctx, "Op de telefoon: gebruik de knoppen onderin", 436, "16px 'Comic Sans MS', sans-serif", "#cfe8ff");
 
   ctx.globalAlpha = blink(time);
-  centerText(ctx, "Druk op SPATIE of tik op ▲ om te beginnen", 456, "bold 24px 'Comic Sans MS', sans-serif", "#a8ffb0");
+  centerText(ctx, "Druk op SPATIE om te beginnen", 486, "bold 24px 'Comic Sans MS', sans-serif", "#a8ffb0");
   ctx.globalAlpha = 1;
+}
+
+function drawCategoryCard(
+  ctx: Ctx,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  cat: CategoryDef,
+  selected: boolean,
+  time: number,
+): void {
+  // Geselecteerde kaart: lichter, gele rand en een lichte "pop".
+  const lift = selected ? Math.sin(time * 4) * 3 : 0;
+  const cy = y - lift;
+  ctx.fillStyle = selected ? "rgba(60,70,120,0.95)" : "rgba(30,35,60,0.8)";
+  ctx.beginPath();
+  ctx.roundRect(x, cy, w, h, 18);
+  ctx.fill();
+  ctx.lineWidth = selected ? 5 : 2;
+  ctx.strokeStyle = selected ? "#ffd23f" : "rgba(255,255,255,0.35)";
+  ctx.stroke();
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  ctx.font = "64px serif";
+  ctx.fillStyle = "#fff";
+  ctx.fillText(cat.emoji, x + w / 2, cy + 58);
+
+  ctx.font = "bold 30px 'Comic Sans MS', sans-serif";
+  ctx.fillStyle = selected ? "#ffd23f" : "#fff";
+  ctx.fillText(cat.naam, x + w / 2, cy + 110);
+
+  ctx.font = "16px 'Comic Sans MS', sans-serif";
+  ctx.fillStyle = "#cfe8ff";
+  ctx.fillText(cat.tagline, x + w / 2, cy + 142);
 }
 
 export function drawLevelComplete(
@@ -88,17 +146,18 @@ export function drawLevelComplete(
 export function drawGameComplete(
   ctx: Ctx,
   totalCollected: number,
+  category: CategoryDef,
   time: number,
 ): void {
   overlay(ctx, 0.65);
 
   centerText(ctx, "🏆 Gewonnen! 🏆", 150, "bold 48px 'Comic Sans MS', sans-serif", "#ffd23f");
-  centerText(ctx, "Oom Sander en Daan hebben de hele safari gedaan!", 220, "24px 'Comic Sans MS', sans-serif", "#fff");
+  centerText(ctx, `Oom Sander en Daan hebben "${category.naam}" uitgespeeld!`, 220, "24px 'Comic Sans MS', sans-serif", "#fff");
   centerText(ctx, `Samen ${totalCollected} dieren gevonden! 🐾`, 270, "26px 'Comic Sans MS', sans-serif", "#a8ffb0");
 
-  centerText(ctx, "Veel plezier in Beekse Bergen! 🦁🦒🐘", 340, "26px 'Comic Sans MS', sans-serif", "#fff");
+  centerText(ctx, `Goed gedaan! ${category.emoji}`, 340, "26px 'Comic Sans MS', sans-serif", "#fff");
 
   ctx.globalAlpha = blink(time);
-  centerText(ctx, "Druk op SPATIE om opnieuw te spelen", 430, "bold 24px 'Comic Sans MS', sans-serif", "#cfe8ff");
+  centerText(ctx, "Druk op SPATIE om een avontuur te kiezen", 430, "bold 24px 'Comic Sans MS', sans-serif", "#cfe8ff");
   ctx.globalAlpha = 1;
 }

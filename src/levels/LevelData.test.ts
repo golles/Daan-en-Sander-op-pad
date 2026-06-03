@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { LEVELS } from "./LevelData.ts";
+import { CATEGORIES } from "./LevelData.ts";
 import type { LevelDef } from "../game/types.ts";
 
 // Sprong-natuurkunde (zie Player/Physics): normaal haal je ~138px hoogte
@@ -53,13 +53,20 @@ function reachableSet(all: Surface[]): Set<Surface> {
   return reachable;
 }
 
-describe("LEVELS structuur", () => {
-  it("bevat 10 levels", () => {
-    expect(LEVELS).toHaveLength(10);
+describe("CATEGORIES structuur", () => {
+  it("bevat 2 categorieën", () => {
+    expect(CATEGORIES).toHaveLength(2);
   });
+});
 
-  for (const level of LEVELS) {
-    describe(level.naam, () => {
+for (const category of CATEGORIES) {
+  describe(`Categorie ${category.naam}`, () => {
+    it("bevat 10 levels", () => {
+      expect(category.levels).toHaveLength(10);
+    });
+
+    for (const level of category.levels) {
+      describe(level.naam, () => {
       it("heeft een geldige breedte en finish", () => {
         expect(level.width).toBeGreaterThan(0);
         expect(level.goalX).toBeGreaterThan(0);
@@ -90,6 +97,7 @@ describe("LEVELS structuur", () => {
         const onbereikbaar = all.filter((s) => !reachable.has(s));
         expect(onbereikbaar).toEqual([]);
       });
-    });
-  }
-});
+      });
+    }
+  });
+}

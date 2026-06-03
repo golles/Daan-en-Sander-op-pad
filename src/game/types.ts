@@ -47,6 +47,16 @@ export interface LevelDef {
   startY: number;
 }
 
+/** Een categorie: een verzameling levels met een eigen thema (bv. Safari of Dino's). */
+export interface CategoryDef {
+  id: string;
+  naam: string;
+  emoji: string;
+  /** Korte ondertitel op het keuzescherm. */
+  tagline: string;
+  levels: LevelDef[];
+}
+
 export type GameState =
   | "start"
   | "playing"
