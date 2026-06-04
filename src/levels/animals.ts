@@ -42,3 +42,19 @@ export const DINOS: Record<string, AnimalDef> = {
   kikker: { id: "kikker", emoji: "🐸", naam: "Kikker" },
   schorpioen: { id: "schorpioen", emoji: "🦂", naam: "Schorpioen" },
 };
+
+// Boerderijdieren. Gebruikt door de derde categorie (Boerderij).
+export const BOERDERIJ: Record<string, AnimalDef> = {
+  koe: { id: "koe", emoji: "🐄", naam: "Koe" },
+  varken: { id: "varken", emoji: "🐷", naam: "Varken" },
+  schaap: { id: "schaap", emoji: "🐑", naam: "Schaap" },
+  geitb: { id: "geitb", emoji: "🐐", naam: "Geit" },
+  kip: { id: "kip", emoji: "🐔", naam: "Kip" },
+  haan: { id: "haan", emoji: "🐓", naam: "Haan" },
+  paard: { id: "paard", emoji: "🐴", naam: "Paard" },
+  eend: { id: "eend", emoji: "🦆", naam: "Eend" },
+  konijn: { id: "konijn", emoji: "🐰", naam: "Konijn" },
+  kalkoen: { id: "kalkoen", emoji: "🦃", naam: "Kalkoen" },
+  hond: { id: "hond", emoji: "🐕", naam: "Boerderijhond" },
+  kat: { id: "kat", emoji: "🐈", naam: "Boerderijkat" },
+};

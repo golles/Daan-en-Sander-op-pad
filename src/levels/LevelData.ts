@@ -8,7 +8,7 @@ import type {
   LevelDef,
   PlatformDef,
 } from "../game/types.ts";
-import { ANIMALS as A, DINOS as D } from "./animals.ts";
+import { ANIMALS as A, DINOS as D, BOERDERIJ as B } from "./animals.ts";
 
 export const GROUND_TOP = 486;
 const CANVAS_H = 540;
@@ -94,6 +94,26 @@ const VULKAAN: Theme = {
   skyBottom: "#ffce9a",
   ground: "#5c4030",
   grass: "#8a4a32",
+};
+
+// Boerderij-thema's.
+const WEILAND: Theme = {
+  skyTop: "#8ed6ff",
+  skyBottom: "#eaffd6",
+  ground: "#9c7b46",
+  grass: "#7bbf3a",
+};
+const BOERENERF: Theme = {
+  skyTop: "#aed3f0",
+  skyBottom: "#f3e7c8",
+  ground: "#b58a4a",
+  grass: "#c2a050",
+};
+const ZOMER: Theme = {
+  skyTop: "#73c8ff",
+  skyBottom: "#fff4cf",
+  ground: "#b07f3e",
+  grass: "#86c83a",
 };
 
 function plat(
@@ -549,6 +569,198 @@ const dinoConfigs: LevelCfg[] = [
   },
 ];
 
+// Derde categorie: de boerderij. Opnieuw dezelfde, beproefde
+// platform-geometrie als de safari-levels (alles blijft bereikbaar), maar met
+// koeien, varkens, schapen, kippen en paarden en eigen boerderij-thema's.
+const farmConfigs: LevelCfg[] = [
+  {
+    naam: "Op de Wei",
+    width: 2600,
+    theme: WEILAND,
+    platforms: [plat(700, 410, 180), plat(1400, 395, 200)],
+    animals: [
+      { a: B.koe, x: 420 },
+      { a: B.schaap, x: 760, y: 410 - ANIMAL_SIZE },
+      { a: B.koe, x: 1470, y: 395 - ANIMAL_SIZE },
+      { a: B.schaap, x: 2100 },
+    ],
+    powerUpX: 1180,
+  },
+  {
+    naam: "Het Kippenhok",
+    width: 2800,
+    theme: BOERENERF,
+    platforms: [plat(620, 410, 170), plat(1080, 400, 170), plat(1850, 410, 200)],
+    animals: [
+      { a: B.kip, x: 480 },
+      { a: B.haan, x: 880 },
+      { a: B.kip, x: 1140, y: 400 - ANIMAL_SIZE },
+      { a: B.haan, x: 2300 },
+    ],
+    powerUpX: 1500,
+  },
+  {
+    naam: "De Modderpoel",
+    width: 2900,
+    theme: BOERENERF,
+    platforms: [plat(750, 410, 160), plat(1300, 395, 160), plat(1850, 410, 170)],
+    animals: [
+      { a: B.varken, x: 500 },
+      { a: B.eend, x: 980 },
+      { a: B.varken, x: 1350, y: 395 - ANIMAL_SIZE },
+      { a: B.eend, x: 1900, y: 410 - ANIMAL_SIZE },
+    ],
+    powerUpX: 1600,
+  },
+  {
+    naam: "De Geitenwei",
+    width: 3000,
+    theme: WEILAND,
+    groundSegments: [
+      [0, 1200],
+      [1310, 1690],
+    ],
+    platforms: [plat(700, 405, 150), plat(1500, 395, 200), plat(2150, 400, 160)],
+    animals: [
+      { a: B.geitb, x: 520 },
+      { a: B.konijn, x: 1000 },
+      { a: B.geitb, x: 1560, y: 395 - ANIMAL_SIZE },
+      { a: B.konijn, x: 2500 },
+    ],
+    powerUpX: 1750,
+  },
+  {
+    naam: "In de Stal",
+    width: 3000,
+    theme: BOERENERF,
+    platforms: [
+      plat(600, 410, 140),
+      plat(1050, 400, 140),
+      plat(1500, 395, 150),
+      plat(2050, 405, 180),
+    ],
+    animals: [
+      { a: B.paard, x: 460 },
+      { a: B.koe, x: 1090, y: 400 - ANIMAL_SIZE },
+      { a: B.paard, x: 1540, y: 395 - ANIMAL_SIZE },
+      { a: B.koe, x: 2400 },
+    ],
+    powerUpX: 1750,
+  },
+  // Vanaf hier: na de power-up echt de hoogte in.
+  {
+    naam: "De Hooiberg",
+    width: 3100,
+    theme: BOERENERF,
+    groundSegments: [
+      [0, 1500],
+      [1610, 1490],
+    ],
+    platforms: [
+      plat(650, 410, 130),
+      plat(980, 400, 130),
+      // Klim de hooibalen op tot bovenop de hooiberg (start na de power-up).
+      ...climb(2050),
+    ],
+    animals: [
+      { a: B.kip, x: 500 },
+      { a: B.kalkoen, x: 1010, y: 400 - ANIMAL_SIZE },
+      { a: B.kip, x: 2255, y: 235 - ANIMAL_SIZE }, // op de trap
+      { a: B.kalkoen, x: 2425, y: 175 - ANIMAL_SIZE }, // bovenop de hooiberg
+    ],
+    powerUpX: 1850,
+  },
+  {
+    naam: "Bij de Vijver",
+    width: 3100,
+    theme: WEILAND,
+    platforms: [
+      plat(700, 405, 150),
+      plat(1250, 395, 150),
+      // Klim de oever op (na de power-up).
+      ...climb(1950),
+    ],
+    animals: [
+      { a: B.eend, x: 500 },
+      { a: B.konijn, x: 950 },
+      { a: B.eend, x: 1300, y: 395 - ANIMAL_SIZE },
+      { a: B.konijn, x: 2155, y: 235 - ANIMAL_SIZE }, // op de trap
+      { a: B.eend, x: 2325, y: 175 - ANIMAL_SIZE }, // hoog op de oever
+    ],
+    powerUpX: 1600,
+  },
+  {
+    naam: "De Paardenwei",
+    width: 3200,
+    theme: ZOMER,
+    groundSegments: [
+      [0, 1100],
+      [1210, 940],
+      [2250, 950],
+    ],
+    platforms: [
+      plat(800, 400, 140),
+      plat(1700, 395, 150),
+      // Klim de heuvel op (na de power-up).
+      ...climb(2350),
+    ],
+    animals: [
+      { a: B.paard, x: 600 },
+      { a: B.geitb, x: 1450 },
+      { a: B.paard, x: 1740, y: 395 - ANIMAL_SIZE },
+      { a: B.geitb, x: 2555, y: 235 - ANIMAL_SIZE }, // op de trap
+      { a: B.paard, x: 2725, y: 175 - ANIMAL_SIZE }, // op de top
+    ],
+    powerUpX: 2300,
+  },
+  {
+    naam: "Het Boerenerf",
+    width: 3200,
+    theme: BOERENERF,
+    platforms: [
+      plat(650, 410, 140),
+      plat(1150, 400, 140),
+      plat(1650, 395, 140),
+      // Klim naar het dak van de schuur (na de power-up).
+      ...climb(2150),
+    ],
+    animals: [
+      { a: B.varken, x: 500 },
+      { a: B.hond, x: 1190, y: 400 - ANIMAL_SIZE },
+      { a: B.varken, x: 1690, y: 395 - ANIMAL_SIZE },
+      { a: B.hond, x: 2355, y: 235 - ANIMAL_SIZE }, // hoog op de trap
+      { a: B.kat, x: 2525, y: 175 - ANIMAL_SIZE }, // op het dak
+    ],
+    powerUpX: 2000,
+  },
+  {
+    naam: "Grote Boerderij Finale",
+    width: 3600,
+    theme: ZOMER,
+    groundSegments: [
+      [0, 1300],
+      [1410, 1040],
+      [2550, 1050],
+    ],
+    platforms: [
+      plat(700, 410, 140),
+      plat(1050, 400, 140),
+      plat(1850, 405, 150),
+      plat(2200, 395, 140),
+      // De grote silo (na de power-up): klim helemaal naar de haan bovenop.
+      ...climb(2750),
+    ],
+    animals: [
+      { a: B.koe, x: 520 },
+      { a: B.paard, x: 950 },
+      { a: B.schaap, x: 2050 },
+      { a: B.kat, x: 2600 },
+      { a: B.haan, x: 3125, y: 175 - ANIMAL_SIZE }, // bovenop de silo
+    ],
+    powerUpX: 2680,
+  },
+];
+
 export const CATEGORIES: CategoryDef[] = [
   {
     id: "safari",
@@ -563,5 +775,12 @@ export const CATEGORIES: CategoryDef[] = [
     emoji: "🦖",
     tagline: "Dino's, krokodillen & slangen",
     levels: dinoConfigs.map(buildLevel),
+  },
+  {
+    id: "boerderij",
+    naam: "Boerderij",
+    emoji: "🐔",
+    tagline: "Koe, varken, kip & paard",
+    levels: farmConfigs.map(buildLevel),
   },
 ];

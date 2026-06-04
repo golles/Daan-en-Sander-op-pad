@@ -46,11 +46,14 @@ export function drawStartScreen(
   centerText(ctx, "🦁  Daan & Oom Sander  🦖", 86, "bold 40px 'Comic Sans MS', sans-serif", "#ffd23f");
   centerText(ctx, "Kies je avontuur!", 134, "bold 28px 'Comic Sans MS', sans-serif", "#fff");
 
-  // Twee categoriekaarten naast elkaar.
-  const cardW = 300;
+  // Categoriekaarten naast elkaar; de breedte past zich aan het aantal aan
+  // zodat ze altijd binnen het scherm passen.
+  const n = categories.length;
+  const gap = n > 2 ? 36 : 60;
+  const maxRowW = 900;
+  const cardW = Math.min(300, (maxRowW - gap * (n - 1)) / n);
   const cardH = 170;
-  const gap = 60;
-  const totalW = categories.length * cardW + (categories.length - 1) * gap;
+  const totalW = n * cardW + (n - 1) * gap;
   let cx = VIEW_W / 2 - totalW / 2;
   const cardY = 190;
   for (let i = 0; i < categories.length; i++) {
