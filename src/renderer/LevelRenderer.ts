@@ -18,20 +18,35 @@ export function drawLevel(
 ): void {
   const def = level.def;
 
-  // Lucht.
+  const water = def.scene === "water";
+
+  // Lucht of water.
   verticalGradient(ctx, 0, 0, VIEW_W, VIEW_H, def.skyTop, def.skyBottom);
 
-  // Zon.
-  ctx.fillStyle = "rgba(255,247,200,0.9)";
-  ctx.beginPath();
-  ctx.arc(780, 110, 46, 0, Math.PI * 2);
-  ctx.fill();
+  if (water) {
+    // Lichtstralen die van het wateroppervlak naar beneden vallen.
+    drawWaterRays(ctx, camX * 0.5, time);
+  } else {
+    // Zon.
+    ctx.fillStyle = "rgba(255,247,200,0.9)";
+    ctx.beginPath();
+    ctx.arc(780, 110, 46, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
-  // Verre heuvels (parallax: bewegen langzamer dan de camera).
-  drawHills(ctx, camX * 0.3, def.grassColor);
+  // Verre achtergrond (parallax: beweegt langzamer dan de camera).
+  if (water) {
+    drawSeabed(ctx, camX * 0.3, time, def.skyTop);
+  } else {
+    drawHills(ctx, camX * 0.3, def.grassColor);
+  }
 
-  // Wolken (parallax).
-  drawClouds(ctx, camX * 0.5, time);
+  // Wolken of opstijgende luchtbelletjes (parallax).
+  if (water) {
+    drawBubbles(ctx, camX * 0.5, time);
+  } else {
+    drawClouds(ctx, camX * 0.5, time);
+  }
 
   // Platforms.
   for (const p of level.platforms) {
@@ -81,6 +96,102 @@ function drawClouds(ctx: Ctx, camX: number, time: number): void {
     const sx = ((x - camX - drift) % 1300 + 1300) % 1300 - 170;
     cloud(ctx, sx, y);
   }
+}
+
+/**
+ * Verre zeebodem: lage, zachte duinen in een waterkleurige tint (geen felle
+ * heuvels), met wat zwierend zeewier erop. Blijft binnen het kleurthema van
+ * het level zodat het rustig oogt.
+ */
+function drawSeabed(ctx: Ctx, camX: number, time: number, waterTop: string): void {
+  const base = 486;
+
+  // Lage duinen, half doorzichtig zodat ze als verre zeebodem-waas lezen.
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  ctx.fillStyle = shade(waterTop, -0.14);
+  for (let i = -1; i < 9; i++) {
+    const cx = i * 320 - (camX % 320);
+    ctx.beginPath();
+    ctx.moveTo(cx, base);
+    ctx.quadraticCurveTo(cx + 160, base - 64, cx + 320, base);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+
+  // Zwierend zeewier in plukjes langs de bodem.
+  const weedColor = shade(waterTop, -0.26);
+  const stalks = [80, 150, 210, 470, 540, 600, 860, 930, 1250, 1320];
+  for (let i = 0; i < stalks.length; i++) {
+    const x = ((stalks[i] - camX) % 1500 + 1500) % 1500 - 100;
+    const h = 70 + (i % 3) * 26;
+    const sway = Math.sin(time * 1.4 + i) * 14;
+    seaweed(ctx, x, base, h, sway, weedColor);
+  }
+}
+
+/** Eén zwierende zeewiersliert. */
+function seaweed(
+  ctx: Ctx,
+  x: number,
+  baseY: number,
+  height: number,
+  sway: number,
+  color: string,
+): void {
+  ctx.save();
+  ctx.globalAlpha = 0.55;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x - 6, baseY);
+  ctx.quadraticCurveTo(x - 6 + sway, baseY - height * 0.6, x + sway * 1.5, baseY - height);
+  ctx.quadraticCurveTo(x + 6 + sway, baseY - height * 0.6, x + 6, baseY);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+/** Schuine lichtstralen vanaf het wateroppervlak (godrays). */
+function drawWaterRays(ctx: Ctx, camX: number, time: number): void {
+  ctx.save();
+  ctx.fillStyle = "#ffffff";
+  const drift = Math.sin(time * 0.25) * 30;
+  for (let i = -1; i < 6; i++) {
+    const x = i * 220 - (camX % 220) + drift;
+    ctx.globalAlpha = 0.06 + 0.04 * Math.sin(time * 0.7 + i);
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x + 55, 0);
+    ctx.lineTo(x - 110, VIEW_H);
+    ctx.lineTo(x - 200, VIEW_H);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/** Opstijgende luchtbelletjes in kolommen die langzaam naar boven drijven. */
+function drawBubbles(ctx: Ctx, camX: number, time: number): void {
+  ctx.save();
+  ctx.fillStyle = "#ffffff";
+  const columns = [120, 360, 600, 840, 1080];
+  for (let c = 0; c < columns.length; c++) {
+    const sx = (((columns[c] - camX) % 1300) + 1300) % 1300 - 100;
+    for (let b = 0; b < 4; b++) {
+      // Fase 0..1: van onderaan (1) naar het oppervlak (0).
+      const phase = ((time * 0.12 + b * 0.25 + c * 0.13) % 1 + 1) % 1;
+      const y = VIEW_H - phase * VIEW_H;
+      const r = 3 + (b % 3);
+      const wobble = Math.sin(time * 2 + b + c) * 8;
+      // Vervaagt bovenin (bij het oppervlak).
+      ctx.globalAlpha = 0.35 * Math.sin(phase * Math.PI);
+      ctx.beginPath();
+      ctx.arc(sx + wobble, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
 }
 
 function cloud(ctx: Ctx, x: number, y: number): void {

@@ -34,6 +34,8 @@ export interface PlatformDef {
 export interface LevelDef {
   naam: string;
   width: number;
+  /** Sfeer van de achtergrond: land (zon + wolken) of water (stralen + belletjes). */
+  scene: "land" | "water";
   skyTop: string;
   skyBottom: string;
   groundColor: string;

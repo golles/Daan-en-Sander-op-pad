@@ -95,17 +95,21 @@ function drawCategoryCard(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.font = "64px serif";
+  // Schaal de inhoud mee met de kaartbreedte (smaller bij meer categorieën).
+  const s = Math.min(1, w / 300);
+  const mid = x + w / 2;
+
+  ctx.font = `${Math.round(64 * s)}px serif`;
   ctx.fillStyle = "#fff";
-  ctx.fillText(cat.emoji, x + w / 2, cy + 58);
+  ctx.fillText(cat.emoji, mid, cy + 58 * s);
 
-  ctx.font = "bold 30px 'Comic Sans MS', sans-serif";
+  ctx.font = `bold ${Math.round(30 * s)}px 'Comic Sans MS', sans-serif`;
   ctx.fillStyle = selected ? "#ffd23f" : "#fff";
-  ctx.fillText(cat.naam, x + w / 2, cy + 110);
+  ctx.fillText(cat.naam, mid, cy + 110 * s);
 
-  ctx.font = "16px 'Comic Sans MS', sans-serif";
+  ctx.font = `${Math.round(16 * s)}px 'Comic Sans MS', sans-serif`;
   ctx.fillStyle = "#cfe8ff";
-  ctx.fillText(cat.tagline, x + w / 2, cy + 142);
+  ctx.fillText(cat.tagline, mid, cy + 138 * s);
 }
 
 export function drawLevelComplete(

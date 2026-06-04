@@ -58,3 +58,19 @@ export const BOERDERIJ: Record<string, AnimalDef> = {
   hond: { id: "hond", emoji: "🐕", naam: "Boerderijhond" },
   kat: { id: "kat", emoji: "🐈", naam: "Boerderijkat" },
 };
+
+// Zeedieren. Gebruikt door de vierde categorie (Zeedieren).
+export const ZEE: Record<string, AnimalDef> = {
+  haai: { id: "haai", emoji: "🦈", naam: "Haai" },
+  dolfijn: { id: "dolfijn", emoji: "🐬", naam: "Dolfijn" },
+  octopus: { id: "octopus", emoji: "🐙", naam: "Octopus" },
+  krab: { id: "krab", emoji: "🦀", naam: "Krab" },
+  tropvis: { id: "tropvis", emoji: "🐠", naam: "Tropische vis" },
+  kogelvis: { id: "kogelvis", emoji: "🐡", naam: "Kogelvis" },
+  walvis: { id: "walvis", emoji: "🐳", naam: "Walvis" },
+  zeeschildpad: { id: "zeeschildpad", emoji: "🐢", naam: "Zeeschildpad" },
+  zeehond: { id: "zeehond", emoji: "🦭", naam: "Zeehond" },
+  inktvis: { id: "inktvis", emoji: "🦑", naam: "Pijlinktvis" },
+  kreeft: { id: "kreeft", emoji: "🦞", naam: "Kreeft" },
+  garnaal: { id: "garnaal", emoji: "🦐", naam: "Garnaal" },
+};

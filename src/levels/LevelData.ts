@@ -8,7 +8,12 @@ import type {
   LevelDef,
   PlatformDef,
 } from "../game/types.ts";
-import { ANIMALS as A, DINOS as D, BOERDERIJ as B } from "./animals.ts";
+import {
+  ANIMALS as A,
+  DINOS as D,
+  BOERDERIJ as B,
+  ZEE as Z,
+} from "./animals.ts";
 
 export const GROUND_TOP = 486;
 const CANVAS_H = 540;
@@ -116,6 +121,32 @@ const ZOMER: Theme = {
   grass: "#86c83a",
 };
 
+// Zee-thema's: het "luchtruim" is hier het water, de "grond" de zeebodem.
+const ONDIEPTE: Theme = {
+  skyTop: "#5fc8e8",
+  skyBottom: "#bdf0f7",
+  ground: "#d9c48a",
+  grass: "#3aa39a",
+};
+const RIF: Theme = {
+  skyTop: "#3aa6c9",
+  skyBottom: "#a9e8f0",
+  ground: "#e0b878",
+  grass: "#cf6f8a",
+};
+const DIEPZEE: Theme = {
+  skyTop: "#1f4a7a",
+  skyBottom: "#5a9fc4",
+  ground: "#4a5a6a",
+  grass: "#2f6f7a",
+};
+const KUST: Theme = {
+  skyTop: "#8ed6ff",
+  skyBottom: "#dff3ff",
+  ground: "#e6d39a",
+  grass: "#5cae9c",
+};
+
 function plat(
   x: number,
   topY: number,
@@ -144,7 +175,7 @@ function climb(x0: number): PlatformDef[] {
   ];
 }
 
-function buildLevel(cfg: LevelCfg): LevelDef {
+function buildLevel(cfg: LevelCfg, scene: "land" | "water" = "land"): LevelDef {
   const platforms: PlatformDef[] = [];
 
   // Grond.
@@ -172,6 +203,7 @@ function buildLevel(cfg: LevelCfg): LevelDef {
   return {
     naam: cfg.naam,
     width: cfg.width,
+    scene,
     skyTop: cfg.theme.skyTop,
     skyBottom: cfg.theme.skyBottom,
     groundColor: cfg.theme.ground,
@@ -761,26 +793,225 @@ const farmConfigs: LevelCfg[] = [
   },
 ];
 
+// Vierde categorie: de zee. Opnieuw dezelfde, beproefde platform-geometrie als
+// de safari-levels (alles blijft bereikbaar), maar met haaien, dolfijnen,
+// krabben en octopussen en eigen onderwater-thema's.
+const zeeConfigs: LevelCfg[] = [
+  {
+    naam: "In de Branding",
+    width: 2600,
+    theme: KUST,
+    platforms: [plat(700, 410, 180), plat(1400, 395, 200)],
+    animals: [
+      { a: Z.krab, x: 420 },
+      { a: Z.tropvis, x: 760, y: 410 - ANIMAL_SIZE },
+      { a: Z.krab, x: 1470, y: 395 - ANIMAL_SIZE },
+      { a: Z.tropvis, x: 2100 },
+    ],
+    powerUpX: 1180,
+  },
+  {
+    naam: "Het Koraalrif",
+    width: 2800,
+    theme: RIF,
+    platforms: [plat(620, 410, 170), plat(1080, 400, 170), plat(1850, 410, 200)],
+    animals: [
+      { a: Z.tropvis, x: 480 },
+      { a: Z.kogelvis, x: 880 },
+      { a: Z.tropvis, x: 1140, y: 400 - ANIMAL_SIZE },
+      { a: Z.kogelvis, x: 2300 },
+    ],
+    powerUpX: 1500,
+  },
+  {
+    naam: "Krabbenstrand",
+    width: 2900,
+    theme: KUST,
+    platforms: [plat(750, 410, 160), plat(1300, 395, 160), plat(1850, 410, 170)],
+    animals: [
+      { a: Z.krab, x: 500 },
+      { a: Z.garnaal, x: 980 },
+      { a: Z.krab, x: 1350, y: 395 - ANIMAL_SIZE },
+      { a: Z.garnaal, x: 1900, y: 410 - ANIMAL_SIZE },
+    ],
+    powerUpX: 1600,
+  },
+  {
+    naam: "Zeehondenbaai",
+    width: 3000,
+    theme: ONDIEPTE,
+    groundSegments: [
+      [0, 1200],
+      [1310, 1690],
+    ],
+    platforms: [plat(700, 405, 150), plat(1500, 395, 200), plat(2150, 400, 160)],
+    animals: [
+      { a: Z.zeehond, x: 520 },
+      { a: Z.kreeft, x: 1000 },
+      { a: Z.zeehond, x: 1560, y: 395 - ANIMAL_SIZE },
+      { a: Z.kreeft, x: 2500 },
+    ],
+    powerUpX: 1750,
+  },
+  {
+    naam: "Dolfijnenzee",
+    width: 3000,
+    theme: ONDIEPTE,
+    platforms: [
+      plat(600, 410, 140),
+      plat(1050, 400, 140),
+      plat(1500, 395, 150),
+      plat(2050, 405, 180),
+    ],
+    animals: [
+      { a: Z.dolfijn, x: 460 },
+      { a: Z.zeeschildpad, x: 1090, y: 400 - ANIMAL_SIZE },
+      { a: Z.dolfijn, x: 1540, y: 395 - ANIMAL_SIZE },
+      { a: Z.zeeschildpad, x: 2400 },
+    ],
+    powerUpX: 1750,
+  },
+  // Vanaf hier: na de power-up echt de hoogte in (naar het wateroppervlak).
+  {
+    naam: "De Koraaltuin",
+    width: 3100,
+    theme: RIF,
+    groundSegments: [
+      [0, 1500],
+      [1610, 1490],
+    ],
+    platforms: [
+      plat(650, 410, 130),
+      plat(980, 400, 130),
+      // Zwem langs de koraalpilaren omhoog (start na de power-up).
+      ...climb(2050),
+    ],
+    animals: [
+      { a: Z.tropvis, x: 500 },
+      { a: Z.octopus, x: 1010, y: 400 - ANIMAL_SIZE },
+      { a: Z.tropvis, x: 2255, y: 235 - ANIMAL_SIZE }, // op de trap
+      { a: Z.octopus, x: 2425, y: 175 - ANIMAL_SIZE }, // bovenin het koraal
+    ],
+    powerUpX: 1850,
+  },
+  {
+    naam: "Inktvisgrot",
+    width: 3100,
+    theme: DIEPZEE,
+    platforms: [
+      plat(700, 405, 150),
+      plat(1250, 395, 150),
+      // Klim uit de grot omhoog (na de power-up).
+      ...climb(1950),
+    ],
+    animals: [
+      { a: Z.octopus, x: 500 },
+      { a: Z.inktvis, x: 950 },
+      { a: Z.octopus, x: 1300, y: 395 - ANIMAL_SIZE },
+      { a: Z.inktvis, x: 2155, y: 235 - ANIMAL_SIZE }, // op de trap
+      { a: Z.inktvis, x: 2325, y: 175 - ANIMAL_SIZE }, // hoog in het water
+    ],
+    powerUpX: 1600,
+  },
+  {
+    naam: "Schildpaddenrif",
+    width: 3200,
+    theme: RIF,
+    groundSegments: [
+      [0, 1100],
+      [1210, 940],
+      [2250, 950],
+    ],
+    platforms: [
+      plat(800, 400, 140),
+      plat(1700, 395, 150),
+      // Zwem het rif op (na de power-up).
+      ...climb(2350),
+    ],
+    animals: [
+      { a: Z.zeeschildpad, x: 600 },
+      { a: Z.krab, x: 1450 },
+      { a: Z.zeeschildpad, x: 1740, y: 395 - ANIMAL_SIZE },
+      { a: Z.krab, x: 2555, y: 235 - ANIMAL_SIZE }, // op de trap
+      { a: Z.zeeschildpad, x: 2725, y: 175 - ANIMAL_SIZE }, // op de top
+    ],
+    powerUpX: 2300,
+  },
+  {
+    naam: "Diepzeeduik",
+    width: 3200,
+    theme: DIEPZEE,
+    platforms: [
+      plat(650, 410, 140),
+      plat(1150, 400, 140),
+      plat(1650, 395, 140),
+      // Klim terug omhoog naar het licht (na de power-up).
+      ...climb(2150),
+    ],
+    animals: [
+      { a: Z.inktvis, x: 500 },
+      { a: Z.kogelvis, x: 1190, y: 400 - ANIMAL_SIZE },
+      { a: Z.inktvis, x: 1690, y: 395 - ANIMAL_SIZE },
+      { a: Z.kogelvis, x: 2355, y: 235 - ANIMAL_SIZE }, // hoog op de trap
+      { a: Z.inktvis, x: 2525, y: 175 - ANIMAL_SIZE }, // bovenin
+    ],
+    powerUpX: 2000,
+  },
+  {
+    naam: "Grote Oceaan Finale",
+    width: 3600,
+    theme: DIEPZEE,
+    groundSegments: [
+      [0, 1300],
+      [1410, 1040],
+      [2550, 1050],
+    ],
+    platforms: [
+      plat(700, 410, 140),
+      plat(1050, 400, 140),
+      plat(1850, 405, 150),
+      plat(2200, 395, 140),
+      // De grote waterzuil (na de power-up): zwem helemaal naar de haai.
+      ...climb(2750),
+    ],
+    animals: [
+      { a: Z.dolfijn, x: 520 },
+      { a: Z.walvis, x: 950 },
+      { a: Z.zeehond, x: 2050 },
+      { a: Z.kreeft, x: 2600 },
+      { a: Z.haai, x: 3125, y: 175 - ANIMAL_SIZE }, // bovenin het water
+    ],
+    powerUpX: 2680,
+  },
+];
+
 export const CATEGORIES: CategoryDef[] = [
   {
     id: "safari",
     naam: "Safari",
     emoji: "🦁",
     tagline: "Dieren van Beekse Bergen",
-    levels: safariConfigs.map(buildLevel),
+    levels: safariConfigs.map((c) => buildLevel(c)),
   },
   {
     id: "dino",
     naam: "Dino's",
     emoji: "🦖",
     tagline: "Dino's, krokodillen & slangen",
-    levels: dinoConfigs.map(buildLevel),
+    levels: dinoConfigs.map((c) => buildLevel(c)),
   },
   {
     id: "boerderij",
     naam: "Boerderij",
     emoji: "🐔",
     tagline: "Koe, varken, kip & paard",
-    levels: farmConfigs.map(buildLevel),
+    levels: farmConfigs.map((c) => buildLevel(c)),
+  },
+  {
+    id: "zee",
+    naam: "Zeedieren",
+    emoji: "🐬",
+    tagline: "Haai, dolfijn, krab & octopus",
+    levels: zeeConfigs.map((c) => buildLevel(c, "water")),
   },
 ];

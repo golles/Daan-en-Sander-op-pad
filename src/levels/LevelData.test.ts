@@ -54,8 +54,8 @@ function reachableSet(all: Surface[]): Set<Surface> {
 }
 
 describe("CATEGORIES structuur", () => {
-  it("bevat 3 categorieën", () => {
-    expect(CATEGORIES).toHaveLength(3);
+  it("bevat 4 categorieën", () => {
+    expect(CATEGORIES).toHaveLength(4);
   });
 });
 
