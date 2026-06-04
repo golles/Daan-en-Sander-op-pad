@@ -44,6 +44,7 @@ export class Input {
     if (e.key === "ArrowRight") return "right";
     if (e.key === "ArrowUp") return "jump";
     if (e.key === "Enter") return "enter";
+    if (e.key === "d" || e.key === "D") return "swap"; // geheime "Daan voorop"-toets
     return e.key;
   }
 
@@ -60,7 +61,7 @@ export class Input {
   }
 
   /** True als deze actie net (deze frame) is ingedrukt. */
-  justPressed(action: "jump" | "enter" | "left" | "right"): boolean {
+  justPressed(action: "jump" | "enter" | "left" | "right" | "swap"): boolean {
     return this.pressedThisFrame.has(action);
   }
 

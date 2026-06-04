@@ -46,6 +46,8 @@ export class Game {
 
   private state: GameState = "start";
   private selectedCategory = 0; // gekozen categorie op het startscherm
+  // Geheime modus: met D loopt Daan voorop en volgt Oom Sander.
+  private daanLeads = false;
   private camX = 0;
   private totalCollected = 0;
   private time = 0;
@@ -151,7 +153,18 @@ export class Game {
     }
   }
 
+  /** Naam van wie er voorop loopt (voor banners). */
+  private get leaderName(): string {
+    return this.daanLeads ? "Daan" : "Oom Sander";
+  }
+
   private updatePlaying(dt: number): void {
+    // Geheime toets: wissel wie voorop loopt (Daan ↔ Oom Sander).
+    if (this.input.justPressed("swap")) {
+      this.daanLeads = !this.daanLeads;
+      this.sound.collect();
+    }
+
     const wasOnGround = this.player.onGround;
     this.player.update(this.input, this.level.platforms, dt);
 
@@ -208,7 +221,7 @@ export class Game {
   private triggerSuper(): void {
     this.player.activateSuper();
     this.sound.powerUp();
-    this.banner.showSuper(this.bannerAtBottom(this.level.powerUp.y));
+    this.banner.showSuper(this.bannerAtBottom(this.level.powerUp.y), this.leaderName);
     this.flash = 1;
     this.shockwave = {
       x: this.player.centerX,
@@ -309,8 +322,8 @@ export class Game {
     ctx.clearRect(0, 0, VIEW_W, VIEW_H);
 
     drawLevel(ctx, this.level, this.camX, this.time);
-    drawFollower(ctx, this.follower, this.camX);
-    drawPlayer(ctx, this.player, this.camX, this.time);
+    drawFollower(ctx, this.follower, this.camX, this.daanLeads);
+    drawPlayer(ctx, this.player, this.camX, this.time, this.daanLeads);
 
     this.renderShockwave();
     this.renderParticles();

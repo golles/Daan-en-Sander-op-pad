@@ -12,6 +12,37 @@ export interface Palette {
   shoes: string;
 }
 
+// Kleuren van de twee poppetjes, en hun Super-variant (goud). Centraal zodat
+// Speler- en Volger-renderer ze kunnen wisselen (geheime "Daan voorop"-modus).
+export const SANDER: Palette = {
+  skin: "#f1c27d",
+  hair: "#4a3220",
+  shirt: "#2e6fdb",
+  pants: "#34404f",
+  shoes: "#222831",
+};
+export const SANDER_SUPER: Palette = {
+  skin: "#f1c27d",
+  hair: "#4a3220",
+  shirt: "#ffd23f",
+  pants: "#c77f0a",
+  shoes: "#7a4a05",
+};
+export const DAAN: Palette = {
+  skin: "#f5d0a0",
+  hair: "#e8c560",
+  shirt: "#e8453c",
+  pants: "#3b6e3b",
+  shoes: "#2a2a2a",
+};
+export const DAAN_SUPER: Palette = {
+  skin: "#f5d0a0",
+  hair: "#e8c560",
+  shirt: "#ffd23f",
+  pants: "#c77f0a",
+  shoes: "#7a4a05",
+};
+
 export interface CharacterOptions {
   facing: number; // 1 of -1
   walking: boolean;

@@ -1,22 +1,21 @@
-// Tekent Daan (de kleine die Oom Sander volgt).
+// Tekent de volger: normaal Daan, maar in de geheime "Daan voorop"-modus is de
+// volger juist Oom Sander.
 
-import { drawCharacter } from "./Character.ts";
-import type { Palette } from "./Character.ts";
+import { drawCharacter, SANDER, DAAN } from "./Character.ts";
 import type { Follower } from "../entities/Follower.ts";
 import type { Ctx } from "./DrawUtils.ts";
 
-const DAAN: Palette = {
-  skin: "#f5d0a0",
-  hair: "#e8c560",
-  shirt: "#e8453c",
-  pants: "#3b6e3b",
-  shoes: "#2a2a2a",
-};
-
-export function drawFollower(ctx: Ctx, daan: Follower, camX: number): void {
-  drawCharacter(ctx, daan.x - camX, daan.y, daan.w, daan.h, DAAN, {
-    facing: daan.facing,
-    walking: daan.walking,
-    animTime: daan.animTime,
+export function drawFollower(
+  ctx: Ctx,
+  follower: Follower,
+  camX: number,
+  asDaan = false,
+): void {
+  // asDaan = Daan loopt voorop, dus de volger is Oom Sander.
+  const palette = asDaan ? SANDER : DAAN;
+  drawCharacter(ctx, follower.x - camX, follower.y, follower.w, follower.h, palette, {
+    facing: follower.facing,
+    walking: follower.walking,
+    animTime: follower.animTime,
   });
 }

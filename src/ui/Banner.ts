@@ -42,11 +42,11 @@ export class Banner {
     });
   }
 
-  showSuper(bottom = false): void {
+  showSuper(bottom = false, naam = "Oom Sander"): void {
     this.show({
       emoji: "🦸",
       label: "POWER-UP!",
-      title: "Super Oom Sander!",
+      title: `Super ${naam}!`,
       gold: true,
       bottom,
       timeLeft: DURATION,
