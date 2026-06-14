@@ -1,0 +1,19 @@
+{
+  "name": "Daan & Oom Sander op Safari",
+  "short_name": "Safari",
+  "description": "Een vrolijk safari-avontuur voor Daan & Oom Sander.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#87ceeb",
+  "theme_color": "#87ceeb",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

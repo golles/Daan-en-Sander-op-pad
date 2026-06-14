@@ -36,6 +36,39 @@ body {
   display: block;
 }
 
+/* --- Knop voor volledig scherm (rechtsboven) --- */
+#fullscreen-btn {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 30;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.32);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  opacity: 0.55;
+}
+
+#fullscreen-btn:hover {
+  opacity: 1;
+}
+
+#fullscreen-btn.is-on {
+  background: rgba(255, 210, 63, 0.5);
+}
+
 /* --- Schermbediening voor mobiel --- */
 .touch-zone {
   position: fixed;
